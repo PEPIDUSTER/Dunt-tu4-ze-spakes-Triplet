@@ -7,7 +7,7 @@ public class PlayerMovement : MonoBehaviour
 
     private Rigidbody2D rigidBody;
     private Animator anim;
-    private GameController SC;
+    private GameController GameController;
 
     [Header("Movement")]
     public float moveSpeed = 3.0f;
@@ -26,14 +26,19 @@ public class PlayerMovement : MonoBehaviour
     public SpikeSpawner wallR;
     public SpikeSpawner wallL;
 
+    private int score;
+
     void Start()
     {
+        
+        rigidBody = GetComponent<Rigidbody2D>();
+        anim = GetComponent<Animator>();
+        GameController = GameObject.Find("Main Camera").GetComponent<GameController>();
+
         pos1 = transform.position;    
         pos2 = new Vector2 (0.0f, 1.5f);  
 
-        rigidBody = GetComponent<Rigidbody2D>();
-        anim = GetComponent<Animator>();
-        SC = GameObject.Find("Main Camera").GetComponent<GameController>();
+        GameController.Replay();
     }
 
     private void FixedUpdate() {
@@ -59,23 +64,21 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D col) {
         if (col.gameObject.tag == "spike") {
-            isDead = true;
-            anim.SetBool("isDead",true);
-            Destroy(gameObject, 5);
+            Death();
         }
     }
     private void OnTriggerEnter2D(Collider2D col) {
         if (!isDead) {
             if (col.gameObject.name == "wall left") {
                 flip();
-                SC.score += 1;
+                GameController.IncreaseScore();
                 moveSpeed += 0.04f;
                 wallR.CreateLine();
                 wallL.DestroyLine();
 
             } else if (col.gameObject.name == "wall right") {
                 flip();
-                SC.score += 1;
+                GameController.IncreaseScore();
                 moveSpeed += 0.04f;
                 wallL.CreateLine();
                 wallR.DestroyLine();
@@ -92,6 +95,16 @@ public class PlayerMovement : MonoBehaviour
         Vector2 Scaler = transform.localScale;
         Scaler.x *= -1;
         transform.localScale = Scaler;
+    }
+
+    private void Death() {
+        isDead = true;
+        rigidBody.Sleep();
+        anim.SetBool("isDead",true);
+        Destroy(gameObject, 5);
+        GameController.GameScreen.SetActive(false);
+        GameController.MenuScreen.SetActive(true);
+        GameController.deathScoreText.text = GameController.score.ToString();
     }
 
     private void idleAnimation () {

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SpikeSpawner : MonoBehaviour
 {
-    private GameController SC;
+    private GameController GameController;
 
     [Header ("Prefab of spike")]
     public GameObject spikePrefab;
@@ -14,25 +14,26 @@ public class SpikeSpawner : MonoBehaviour
     [SerializeField]
     private List<GameObject> spikes;
 
-    int spikeCount = 1;
+    private int spikeCount = 1;
+
 
 
     void Start()
     {
-         SC = GameObject.Find("Main Camera").GetComponent<GameController>();
+        GameController = GameObject.Find("Main Camera").GetComponent<GameController>();
     }
 
     void Update() {
 
-        if (SC.score >= 1 && SC.score <= 4) 
+        if (GameController.score >= 1 && GameController.score <= 4) 
             spikeCount = 2;
-        else if (SC.score >= 5 && SC.score <= 10)
+        else if (GameController.score >= 5 && GameController.score <= 10)
             spikeCount = 3;
-        else if (SC.score >= 11 && SC.score <= 17)
+        else if (GameController.score >= 11 && GameController.score <= 17)
             spikeCount = 4;
-        else if (SC.score >= 18 && SC.score <= 26)
+        else if (GameController.score >= 18 && GameController.score <= 26)
             spikeCount = 5;
-        else if (SC.score >= 27 && SC.score <= 35)
+        else if (GameController.score >= 27 && GameController.score <= 35)
             spikeCount = 6; 
     }
 
